@@ -6,24 +6,6 @@ import (
 	"net/http"
 )
 
-type result struct {
-	intResult  int
-	boolResult bool
-	listResult []string
-	ok         bool
-}
-
-type command struct {
-	key       string
-	value     int
-	operation string
-	res       chan result
-}
-
-type Server struct {
-	ch chan command
-}
-
 func NewServer() *Server {
 	return &Server{
 		ch: make(chan command),
@@ -46,11 +28,6 @@ func (s *Server) handleGetKey(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(map[string]int{key: resp.intResult}); err != nil {
 		log.Printf("Failed to write response: %v", err)
 	}
-}
-
-type createKeyValue struct {
-	Key   string `json:"key"`
-	Value int    `json:"value"`
 }
 
 func (s *Server) handlePutKey(w http.ResponseWriter, r *http.Request) {
