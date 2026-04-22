@@ -18,6 +18,7 @@ func (s *Server) handleGetKey(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
+
 	key := r.PathValue("key")
 
 	result := make(chan result)
@@ -41,6 +42,9 @@ func (s *Server) handleGetKey(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handlePutKey(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
 	var req createKeyValue
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
