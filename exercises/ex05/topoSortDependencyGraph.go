@@ -59,10 +59,45 @@ func collectNodes(graph map[int]map[int]bool) map[int]bool {
 func topoSort(graph map[int]map[int]bool) ([]int, bool) {
 	// TODO:
 	// 1. collect all nodes
+	nodes := collectNodes(graph)
+	indegrees := make(map[int]int)
+	q := []int{}
+	res := []int{}
+
 	// 2. compute indegree of each node
+	for node := range nodes {
+		indegrees[node] = 0
+		for rcvr := range graph[node] {
+			indegrees[rcvr] += 1
+		}
+	}
+
+	for node, indegree := range indegrees {
+		if indegree == 0 {
+			q = append(q, node)
+			delete(indegrees, node)
+		}
+	}
+
 	// 3. initialize queue with indegree-0 nodes
 	// 4. run Kahn's algorithm
+	for len(q) > 0 {
+		curr := q[0]
+		q = q[1:]
+		res = append(res, curr)
+
+		for nei := range graph[curr] {
+			indegrees[nei] -= 1
+			if indegrees[nei] == 0 {
+				q = append(q, nei)
+			}
+		}
+	}
 	// 5. if result size != number of nodes, return false
+	if len(res) == len(nodes) {
+		return res, true
+	}
+
 	return nil, false
 }
 
